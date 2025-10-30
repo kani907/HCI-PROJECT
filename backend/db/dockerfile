@@ -1,0 +1,10 @@
+FROM mongo:6.0
+
+# Copy all initialization scripts from our local directory
+# to the corresponding directory in the image.
+COPY docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
+
+EXPOSE 27017
+
+# The base image already has the correct CMD, so we don't
+# need to add it again.
