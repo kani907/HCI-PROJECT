@@ -1,9 +1,12 @@
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from app.routers import user
 import pymongo
 
 # creating api
 app = FastAPI()
+# app.include_router(user.router)
 
 # connecting to db
 client = pymongo.MongoClient("mongodb://localhost:27017/")
