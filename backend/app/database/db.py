@@ -10,3 +10,4 @@ database = client["mongodb_local"]
 # print(client.server_info())
 
 users_collection = database['users']
+timer_collection = database['timer']
