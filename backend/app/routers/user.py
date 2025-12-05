@@ -1,9 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 
 from app.database.db import users_collection
 from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from app.models.user_model import user_model
+from app.core.security import hash_password
+from app.dependencies import get_current_user, require_admin
 
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -14,24 +16,46 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=UserResponse)
+def action_permitted(current_user, id):
+    if current_user.get('role') != 'admin':
+        if user_model(current_user.get('id')) != id:
+            return False
+    return True
+
+
+@router.post("/add", response_model=UserResponse)
 def create_user(user: UserCreate):
     new_user = dict(user)
+    new_user["password"] = hash_password(user.password)
+    new_user['role'] = user.role
+
+    # is email unique?
+    isUnique = True
+    for db_user in users_collection.find():
+        if user_model(db_user)["email"] == new_user["email"]:
+            isUnique = False
+    if not isUnique:
+        raise HTTPException(status_code=409,
+                            detail="this email is already registered")
+
     result = users_collection.insert_one(new_user)
     created_user = users_collection.find_one({"_id": result.inserted_id})
+
     return user_model(created_user)
 
 
-@router.get("/")
-def get_users():
+@router.get("/all", response_model=list[UserResponse])
+def get_users(admin=Depends(require_admin)):
     users = []
     for user in users_collection.find():
         users.append(user_model(user))
     return users
 
 
-@router.get("/{id}", response_model=UserResponse)
-def get_user(id: str):
+@router.get("/find/{id}", response_model=UserResponse)
+def get_user(id: str, current_user=Depends(get_current_user)):
+    if not action_permitted(current_user, id):
+        raise HTTPException(status_code=403, detail="access denied")
     try:
         obj_id = ObjectId(id)
     except InvalidId:
@@ -45,8 +69,12 @@ def get_user(id: str):
     return user_model(user)
 
 
-@router.put("/{id}", response_model=UserResponse)
-def update_user(id: str, user: UserUpdate):
+@router.put("/update/{id}", response_model=UserResponse)
+def update_user(id: str,
+                user: UserUpdate,
+                current_user=Depends(get_current_user)):
+    if not action_permitted(current_user, id):
+        raise HTTPException(status_code=403, detail="access denied")
     try:
         obj_id = ObjectId(id)
     except InvalidId:
@@ -57,6 +85,9 @@ def update_user(id: str, user: UserUpdate):
     if not update_data:
         raise HTTPException(status_code=400,
                             detail="No data provided to update")
+
+    if "password" in update_data:
+        update_data["password"] = hash_password(update_data["password"])
 
     result = users_collection.update_one(
         {"_id": obj_id},
@@ -70,8 +101,10 @@ def update_user(id: str, user: UserUpdate):
     return user_model(updated_user)
 
 
-@router.delete("/{id}")
-def delete_user(id: str):
+@router.delete("/delete/{id}")
+def delete_user(id: str, current_user=Depends(get_current_user)):
+    if not action_permitted(current_user, id):
+        raise HTTPException(status_code=403, detail="access denied")
     try:
         obj_id = ObjectId(id)
     except InvalidId:
@@ -82,4 +115,16 @@ def delete_user(id: str):
     if not result:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return user_model(result)
+    return {
+        "message": "user deleted succesfully",
+        "deleted_user_id": id
+    }
+
+
+@router.delete("/delete_self")
+def delete_my_account(current_user=Depends(get_current_user)):
+    users_collection.delete_one({"_id": current_user["_id"]})
+
+    return {
+        "message": "Your account has been permanently deleted"
+    }
