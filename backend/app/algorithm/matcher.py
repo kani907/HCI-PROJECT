@@ -27,19 +27,21 @@ class Matcher:
 
         return distances
     
-    def _get_best_match(self, reference_point: np.ndarray, centers: np.ndarray, points: list):
+    def get_best_match(self, reference_point: np.ndarray, centers: np.ndarray, points: list):
         to_centers = self.__get_distances(reference_point, centers)
         min_center = np.argmin(to_centers)
         
-        candidates = np.array([point.location for point in points if point.cluster == min_center])
+        candidates = [point for point in points if point.cluster == min_center]
         
-        if candidates.size == 0:
-            return np.array([])
+        if not candidates:
+            return []
 
-        to_points = self.__get_distances(reference_point, candidates)
-        best_matches = np.sort(to_points)
+        candidates_locations = np.array([point.location for point in candidates])
+
+        to_points = self.__get_distances(reference_point, candidates_locations)
+        
+        sorted_indices = np.argsort(to_points)
+        
+        best_matches = [candidates[i] for i in sorted_indices]
         
         return best_matches
-
-    
-    
