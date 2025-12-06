@@ -2,8 +2,12 @@ from fastapi import FastAPI, Depends
 
 from app.routers import user, auth, movie
 from app.dependencies import get_current_user
-from app.database.db import users_collection
+from app.database.db import users_collection, movie_collection
 from app.core.security import hash_password
+from app.config import settings
+
+import pandas as pd
+
 
 # creating api
 app = FastAPI()
@@ -15,9 +19,9 @@ app.include_router(movie.router)
 
 @app.on_event("startup")
 def create_admin():
-    admin_name = "admin"
-    admin_email = "admin"
-    admin_pwd = "admin"
+    admin_name = settings.ADMIN_NAME
+    admin_email = settings.ADMIN_EMAIL
+    admin_pwd = settings.ADMIN_PASSWORD
 
     existing_admin = users_collection.find_one(
         {"role": "admin"},
@@ -37,6 +41,93 @@ def create_admin():
     }
 
     users_collection.insert_one(admin)
+
+
+@app.on_event("startup")
+def load_movies_if_empty():
+    count = movie_collection.count_documents({})
+    if count > 0:
+        print("\033[33mINFO:\033[0m     movies already loaded")
+        return
+
+    print("\033[33mINFO:\033[0m     movies "
+          "database empty, wait for loading...")
+
+    basics_path = settings.BASIC_PATH
+    ratings_path = settings.RATINGS_PATH
+
+    # Load ratings
+    ratings_df = pd.read_csv(ratings_path, sep="\t")
+    ratings_map = dict(
+        zip(
+            ratings_df["tconst"],
+            zip(ratings_df["averageRating"], ratings_df["numVotes"])
+        )
+    )
+
+    CHUNK_SIZE = 25_000
+    processed_rows = 0
+    total_inserted = 0
+    batch_index = 0
+
+    for chunk in pd.read_csv(
+        basics_path,
+        sep="\t",
+        na_values="\\N",
+        chunksize=CHUNK_SIZE
+    ):
+        batch_index += 1
+        processed_rows += len(chunk)
+
+        chunk = chunk[chunk["titleType"].isin(["movie", "tvSeries"])]
+
+        chunk["runtimeMinutes"] = pd.to_numeric(chunk["runtimeMinutes"],
+                                                errors="coerce")
+        chunk["startYear"] = pd.to_numeric(chunk["startYear"], errors="coerce")
+
+        chunk = chunk[[
+            "tconst",
+            "primaryTitle",
+            "startYear",
+            "runtimeMinutes",
+            "genres"
+        ]]
+
+        chunk = chunk.dropna(subset=[
+            "primaryTitle",
+            "startYear",
+            "runtimeMinutes",
+            "genres"
+        ])
+
+        movies = []
+
+        for _, row in chunk.iterrows():
+            rating, _ = ratings_map.get(row["tconst"], (0, 0))
+
+            movie = {
+                "name": row["primaryTitle"],
+                "release_date": int(row["startYear"]),
+                "rating": float(rating),
+                "tags": {
+                    "genres": row["genres"].split(",")
+                }
+            }
+
+            movies.append(movie)
+
+        if movies:
+            movie_collection.insert_many(movies)
+            total_inserted += len(movies)
+
+        if batch_index % 25 == 0:
+            print(
+                f"Inserted so far: {total_inserted} | "
+                f"remaining: {settings.TOTAL_VIDEOS - total_inserted}"
+            )
+
+    print(f"\033[33mINFO:\033[0m     Finished loading."
+          f" Total inserted: {total_inserted}")
 
 
 @app.get("/")
