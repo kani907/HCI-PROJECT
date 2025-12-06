@@ -11,3 +11,4 @@ database = client["mongodb_local"]
 
 users_collection = database['users']
 timer_collection = database['timer']
+movie_collection = database['movies']

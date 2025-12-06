@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI, Depends
-from app.routers import user, auth
+from app.routers import user, auth, movie
 from app.dependencies import get_current_user
 
 # creating api
@@ -8,6 +8,7 @@ app = FastAPI()
 
 app.include_router(user.router)
 app.include_router(auth.router)
+app.include_router(movie.router)
 
 
 # endpoints
