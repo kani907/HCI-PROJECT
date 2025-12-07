@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 
 from app.routers import user, auth, movie
+from app.routers.movie import get_movies_specific
 from app.dependencies import get_current_user
 from app.database.db import users_collection, movie_collection
 from app.core.security import hash_password
@@ -135,16 +136,31 @@ def root():
     return {"message": "root"}
 
 
-@app.get("/home")
-def home_page():
-    return {"message": "działa"}
-
-
 @app.get("/for_you")
 def propositions(current_user=Depends(get_current_user)):
-    pass
+    # pass user to some Kajetan function
+    # get some query parameters
+    query = {
+        "genres": "Animation,Action,Adventure",
+        "rating_gte": 8,
+        "limit": 10
+    }
+    return get_movies_specific(
+        name=query.get("name", None),
+        rating_gte=query.get("rating_gte", None),
+        rating_lte=query.get("rating_lte", None),
+        year_gte=query.get("year_gte", None),
+        year_lte=query.get("year_lte", None),
+        genres=query.get("genres", None),
+        limit=query.get("limit", None)
+    )
 
 
 @app.get("/top_list")
 def top_list():
-    pass
+    return get_movies_specific(
+        rating_gte=8,
+        rating_lte=10,
+        year_gte=2025, year_lte=2025,
+        limit=20
+    )

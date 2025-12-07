@@ -44,24 +44,71 @@ def get_movies():
 
 @router.get("/specific")
 def get_movies_specific(
-    release_date: Optional[str] = None,
-    rating: Optional[int] = None,
-    tag: Optional[str] = None,
+    name: Optional[str] = None,
+    rating_gte: Optional[float] = None,
+    rating_lte: Optional[float] = None,
+    year_gte: Optional[int] = None,
+    year_lte: Optional[int] = None,
+    genres: Optional[str] = None,
     limit: int = Query(10, gt=0, le=100)
 ):
-    query = {}
+    base_query = {}
 
-    if release_date:
-        query["release_date"] = release_date
+    if rating_gte is not None or rating_lte is not None:
+        base_query["rating"] = {}
+        if rating_gte is not None:
+            base_query["rating"]["$gte"] = rating_gte
+        if rating_lte is not None:
+            base_query["rating"]["$lte"] = rating_lte
 
-    if rating:
-        query["rating"] = rating
+    if year_gte is not None or year_lte is not None:
+        base_query["release_date"] = {}
+        if year_gte is not None:
+            base_query["release_date"]["$gte"] = year_gte
+        if year_lte is not None:
+            base_query["release_date"]["$lte"] = year_lte
 
-    if tag:
-        query[f"tags.{tag}"] = {"$exists": True}
+    if genres:
+        tags = [t.strip() for t in genres.split(',')]
+        base_query["tags.genres"] = {"$all": tags}
 
-    movies = movie_collection.find(query).limit(limit)
+    if name:
+        exact_query = base_query | {
+            "name": {"$regex": f"^{name}$", "$options": "i"}
+        }
 
+        starts_query = base_query | {
+            "name": {"$regex": f"^{name}", "$options": "i"}
+        }
+
+        contains_query = base_query | {
+            "name": {"$regex": name, "$options": "i"}
+        }
+
+        exact_matches = list(movie_collection.find(exact_query))
+        starts_matches = list(movie_collection.find(starts_query)
+                              .sort("rating", -1))
+        contains_matches = list(movie_collection.find(contains_query)
+                                .sort("rating", -1))
+
+        seen_ids = set()
+        result = []
+
+        for group in (exact_matches, starts_matches, contains_matches):
+            for movie in group:
+                mid = str(movie["_id"])
+                if mid not in seen_ids:
+                    seen_ids.add(mid)
+                    result.append(movie)
+
+        return [movie_model(m) for m in result[:limit]]
+
+    movies = (
+        movie_collection
+        .find(base_query)
+        .sort("rating", -1)
+        .limit(limit)
+    )
     return [movie_model(movie) for movie in movies]
 
 
@@ -90,6 +137,46 @@ def get_movie_name(name: str):
                             detail="movie with specified id not found")
 
     return movie_model(movie)
+
+
+@router.get("/find_names/{name}")
+def get_movie_names(
+    name: Optional[str] = None,
+    limit: int = Query(10, gt=0, le=100)
+):
+    if not name:
+        movies = movie_collection.find().limit(limit)
+        return [movie_model(movie) for movie in movies]
+
+    exact_query = {
+        "name": {
+            "$regex": f"^{name}$",
+            "$options": "i"
+        }
+    }
+
+    exact_matches = list(movie_collection.find(exact_query))
+
+    partial_query = {
+        "name": {
+            "$regex": name,
+            "$options": "i"
+        }
+    }
+
+    partial_matches = list(movie_collection.find(partial_query))
+
+    exact_ids = {str(m["_id"]) for m in exact_matches}
+
+    filtered_partials = [
+        m for m in partial_matches
+        if str(m["_id"]) not in exact_ids
+    ]
+
+    combined = exact_matches + filtered_partials
+    combined = combined[:limit]
+
+    return [movie_model(movie) for movie in combined]
 
 
 @router.put("/update/{id}")
