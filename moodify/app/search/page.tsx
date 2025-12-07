@@ -1,22 +1,14 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { movies } from "../data/movies";
 
 export default function SearchPage() {
   const params = useSearchParams();
   const query = params.get("q") || "";
 
   const [results, setResults] = useState([]);
-
-  // mockowane dane
-  const movies = [
-    { title: "Inception" },
-    { title: "Interstellar" },
-    { title: "Inside Out" },
-    { title: "Iron Man" },
-    { title: "I Am Legend" },
-    { title: "The Dark Knight" }
-  ];
 
   useEffect(() => {
     const filtered = movies.filter((m) =>
@@ -34,17 +26,24 @@ export default function SearchPage() {
       )}
 
       <ul style={{ marginTop: "20px", listStyle: "none", padding: 0 }}>
-        {results.map((movie, i) => (
+        {results.map((movie) => (
           <li
-            key={i}
+            key={movie.id}
             style={{
               background: "#222",
               padding: "15px",
               marginBottom: "10px",
               borderRadius: "6px",
+              cursor: "pointer",
+              transition: "0.2s"
             }}
           >
-            {movie.title}
+            <Link
+              href={`/movie/${movie.id}`}
+              style={{ textDecoration: "none", color: "white" }}
+            >
+              {movie.title}
+            </Link>
           </li>
         ))}
       </ul>
