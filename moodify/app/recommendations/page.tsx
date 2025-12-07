@@ -1,36 +1,48 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
 export default function Recommends() {
-  const movies = [
-    {
-      title: "Inception",
-      description: "A skilled thief enters dreams to steal secrets.",
-      img: "/placeholder.png",
-    },
-    {
-      title: "Interstellar",
-      description: "A journey beyond the stars to save humanity.",
-      img: "/placeholder.png",
-    },
-    {
-      title: "The Matrix",
-      description: "A hacker discovers the truth about reality.",
-      img: "/placeholder.png",
-    },
-    {
-      title: "Blade Runner 2049",
-      description: "A young blade runner uncovers a long-hidden secret.",
-      img: "/placeholder.png",
-    },
-    {
-      title: "Arrival",
-      description: "Linguist communicates with extraterrestrial visitors.",
-      img: "/placeholder.png",
-    },
-    {
-      title: "Whiplash",
-      description: "A drummer pushed to his limits by a brutal instructor.",
-      img: "/placeholder.png",
-    },
-  ];
+  const [movies, setMovies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.warn("No token, user not logged in");
+      setLoading(false);
+      return;
+    }
+
+    fetch("http://localhost:8000/for_you", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setMovies(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="orange-frame">
+        <div className="content-box">
+          <h1 className="rec-title">Loading...</h1>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="orange-frame">
@@ -39,12 +51,19 @@ export default function Recommends() {
         <h1 className="rec-title">Moodify recommends...</h1>
 
         <div className="card-grid">
-          {movies.map((movie, i) => (
-            <div className="card" key={i}>
+          {movies.map(movie => (
+            <div
+              className="card"
+              key={movie.id}
+              onClick={() => router.push(`/movie/${movie.id}`)}
+              style={{ cursor: "pointer" }}
+            >
               <div className="card-img" />
               <div className="card-text">
-                <h3>{movie.title}</h3>
-                <p>{movie.description}</p>
+                <h3>{movie.name}</h3>
+                <p>Rating: {movie.rating}</p>
+                <p>Year: {movie.release_date}</p>
+                <p>Genres: {movie.tags?.genres?.join(", ")}</p>
               </div>
             </div>
           ))}
