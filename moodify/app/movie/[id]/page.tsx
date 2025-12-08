@@ -1,3 +1,5 @@
+import AddToProfileButton from "@/app/components/AddToProfileButton";
+
 interface MoviePageProps {
   params: Promise<{
     id: string;
@@ -47,6 +49,7 @@ export default async function MovieProfile({ params }: MoviePageProps) {
           marginTop: "30px",
         }}
       />
+      <AddToProfileButton movieId={id} />
     </div>
   );
 }

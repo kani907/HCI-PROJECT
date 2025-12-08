@@ -159,6 +159,26 @@ html, body {
   margin-bottom: 40px;
 }
 
+.profile-card {
+  background: #222;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid white;
+  max-width: 400px;
+  margin-top: 20px;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+
+.profile-row strong {
+  color: #ff8c00;
+}
+
 
 /* -------------------------------------------------- */
 /* CARD GRID */
