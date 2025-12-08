@@ -12,9 +12,10 @@ class Matcher:
             for emotion in emotions:
                 cur_tags = tags[emotion].keys()
                 for tag in cur_tags:
-                    temp_query = get_emotions_function(name = ",".join(cur_tags).rstrip(","), limit=lm)
-                    for entry in temp_query:
-                        if entry["id"] not in watched:
-                            result_queries.add(entry)
+                    if cur_tags[tag] > 0:
+                        temp_query = get_emotions_function(name = ",".join(cur_tags).rstrip(","), limit=lm)
+                        for entry in temp_query:
+                            if entry["id"] not in watched:
+                                result_queries.add(entry)
             lm+=10
         return list(result_queries)
