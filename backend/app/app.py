@@ -6,12 +6,21 @@ from app.dependencies import get_current_user
 from app.database.db import users_collection, movie_collection
 from app.core.security import hash_password
 from app.config import settings
+from fastapi.middleware.cors import CORSMiddleware
 
 import pandas as pd
 
 
 # creating api
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # możesz tu dać: ["http://localhost:3000"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(user.router)
 app.include_router(auth.router)
