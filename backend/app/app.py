@@ -146,7 +146,13 @@ def root():
 
 
 @app.get("/for_you")
-def propositions(current_user=Depends(get_current_user)):
+def propositions(
+    emotions: str,
+    current_user=Depends(get_current_user)
+):
+    emotions_list = emotions.split(',')
+
+    # query = funkcja_kajetana(emotions_list)
     # pass user to some Kajetan function
     # get some query parameters
     query = {
