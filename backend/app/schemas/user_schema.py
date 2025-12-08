@@ -6,7 +6,6 @@ class UserCreate(BaseModel):
     name: str
     email: str
     password: str
-    algorithm: dict
     role: str = "user"
     history: List[str] = Field(default_factory=list)
 
