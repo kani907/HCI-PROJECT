@@ -134,17 +134,22 @@ def add_movie(
     movie_id: str,
     current_user=Depends(get_current_user)
 ):
+    print("RAW current_user:", current_user)
+    print("TYPE OF _id:", type(current_user["_id"]))
     try:
         get_movie_id(movie_id)
     except HTTPException:
-        raise HTTPException(status_code=404, description="movie not found")
+        raise HTTPException(status_code=404, detail="movie not found")
 
-    user_id = ObjectId(current_user["_id"])
+    user_id = current_user["_id"]
 
     result = users_collection.update_one(
         {"_id": user_id},
-        {"$push": {"history": movie_id}}
+        {"$addToSet": {"history": movie_id}}
     )
+
+    print("MATCHED:", result.matched_count)
+    print("MODIFIED:", result.modified_count)
 
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="User not found")

@@ -10,5 +10,6 @@ def user_model(user) -> dict:
         "name": user['name'],
         "email": user['email'],
         "algorithm": user['algorithm'],
-        "role": user.get('role') or 'user'
+        "role": user.get('role') or 'user',
+        "history": user.get('history', [])
     }
