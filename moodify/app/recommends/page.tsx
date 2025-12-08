@@ -18,14 +18,14 @@ export default function Recommends() {
       return;
     }
 
-    fetch("http://localhost:8000/for_you", {
+    fetch("http://localhost:8000/top_list", {
       headers: {
         Authorization: `Bearer ${token}`,
       }
     })
       .then(res => res.json())
       .then(data => {
-        setMovies(data);
+        setMovies(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(err => {

@@ -20,20 +20,47 @@ export default function Header() {
 
   return (
     <header className="header">
-      <a href="/" className="logo">Moodify</a>
+      <span onClick={() => router.push("/")} className="logo" style={{ cursor: "pointer" }}>
+        Moodify
+      </span>
 
       <nav className="nav-right">
         {!loggedIn && (
           <>
-            <a href="/login" className="btn-small">Sign in</a>
-            <a href="/register" className="btn-small-outline">Register</a>
+            <button className="btn-small" onClick={() => router.push("/login")}>
+              Sign in
+            </button>
+            <button className="btn-small-outline" onClick={() => router.push("/register")}>
+              Register
+            </button>
           </>
         )}
 
         {loggedIn && (
           <>
-            <a href="/recommends" className="nav-link">Recommendations</a>
-            <a href="/profile" className="nav-link">Profile</a>
+            <button
+              className="nav-link"
+              onClick={() => router.push("/recommends")}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              Recommendations
+            </button>
+
+            <button
+              className="nav-link"
+              onClick={() => router.push("/for_you")}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              For You
+            </button>
+
+            <button
+              className="nav-link"
+              onClick={() => router.push("/profile")}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              Profile
+            </button>
 
             <button
               onClick={logout}
