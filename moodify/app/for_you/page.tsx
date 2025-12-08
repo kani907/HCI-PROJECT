@@ -8,14 +8,24 @@ const EMOTIONS = [
   "anxious", "bored", "nostalgic", "confident", "romantic"
 ];
 
+const LOADING_MESSAGES = [
+  "Matching your emotions with movies...",
+  "Searching for the perfect vibe...",
+  "Analyzing mood patterns...",
+  "Scanning movie universe...",
+  "Finding films that feel right...",
+  "Mood-syncing in progress...",
+  "Preparing personalized picks..."
+];
+
 export default function ForYou() {
   const [selected, setSelected] = useState<string[]>([]);
   const [movies, setMovies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("");
 
   const router = useRouter();
 
-  // Redirect if not logged in
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) router.push("/login");
@@ -36,10 +46,18 @@ export default function ForYou() {
 
     setLoading(true);
 
-    const token = localStorage.getItem("token");
-    const emotionsParam = selected.join(",");
+    const random = Math.floor(Math.random() * LOADING_MESSAGES.length);
+    setLoadingMsg(LOADING_MESSAGES[random]);
+
+    const interval = setInterval(() => {
+      const random = Math.floor(Math.random() * LOADING_MESSAGES.length);
+      setLoadingMsg(LOADING_MESSAGES[random]);
+    }, 1500);
 
     try {
+      const token = localStorage.getItem("token");
+      const emotionsParam = selected.join(",");
+
       const res = await fetch(
         `http://localhost:8000/for_you?emotions=${emotionsParam}`,
         {
@@ -49,7 +67,9 @@ export default function ForYou() {
 
       const data = await res.json();
       setMovies(data);
+
     } finally {
+      clearInterval(interval);
       setLoading(false);
     }
   };
@@ -57,6 +77,7 @@ export default function ForYou() {
   return (
     <div className="orange-frame">
       <div className="content-box">
+
         <h1 className="rec-title">Pick 3 emotions</h1>
 
         <div className="emotion-grid">
@@ -80,9 +101,13 @@ export default function ForYou() {
           Get recommendations
         </button>
 
-        {loading && <p style={{ marginTop: 20 }}>Loading...</p>}
+        {loading && (
+          <p style={{ marginTop: 20, fontSize: 18, opacity: 0.8 }}>
+            {loadingMsg}
+          </p>
+        )}
 
-        {movies.length > 0 && (
+        {!loading && movies.length > 0 && (
           <>
             <h2 className="rec-title" style={{ marginTop: 40 }}>
               Moodify recommends...
