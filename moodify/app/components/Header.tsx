@@ -1,23 +1,82 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+
 export default function Header() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setLoggedIn(!!token);
+  }, [pathname]);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
+
   return (
     <header className="header">
-
-      {/* LOGO → HOME */}
-      <a href="/" className="logo">
+      <span onClick={() => router.push("/")} className="logo" style={{ cursor: "pointer" }}>
         Moodify
-      </a>
+      </span>
 
-      {/* NAV LINKS */}
       <nav className="nav-right">
-        <a href="#" className="nav-link">Products</a>
-        <a href="#" className="nav-link">Solutions</a>
-        <a href="#" className="nav-link">Pricing</a>
-        <a href="#" className="nav-link">Contact</a>
+        {!loggedIn && (
+          <>
+            <button className="btn-small" onClick={() => router.push("/login")}>
+              Sign in
+            </button>
+            <button className="btn-small-outline" onClick={() => router.push("/register")}>
+              Register
+            </button>
+          </>
+        )}
 
-        <a href="/login" className="btn-small">Sign in</a>
-        <a href="/register" className="btn-small-outline">Register</a>
+        {loggedIn && (
+          <>
+            <button
+              className="nav-link"
+              onClick={() => router.push("/recommends")}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              Recommendations
+            </button>
+
+            <button
+              className="nav-link"
+              onClick={() => router.push("/for_you")}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              For You
+            </button>
+
+            <button
+              className="nav-link"
+              onClick={() => router.push("/profile")}
+              style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+              Profile
+            </button>
+
+            <button
+              onClick={logout}
+              className="btn-small-outline"
+              style={{
+                color: "white",
+                border: "1px solid white",
+                background: "transparent",
+                cursor: "pointer"
+              }}
+            >
+              Logout
+            </button>
+          </>
+        )}
       </nav>
-
     </header>
   );
 }

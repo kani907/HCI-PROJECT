@@ -12,30 +12,38 @@ export default function Landing() {
     }
   };
 
+  const handleRecommendations = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      router.push("/recommends");   // <-- user logged in
+    } else {
+      router.push("/login");        // <-- user NOT logged in
+    }
+  };
+
   return (
-    <>
-      <div className="hero">
-        <h1>Moodify</h1>
-        <p>Cinema that feels you.</p>
+    <div className="hero">
+      <h1>Moodify</h1>
+      <p>Cinema that feels you.</p>
 
-        <input
-          style={{
-            padding: "10px",
-            width: "260px",
-            borderRadius: "4px",
-            border: "none",
-            marginTop: "10px",
-          }}
-          placeholder="Find a movie..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleSearch}
-        />
+      <input
+        style={{
+          padding: "10px",
+          width: "260px",
+          borderRadius: "4px",
+          border: "none",
+          marginTop: "10px",
+        }}
+        placeholder="Find a movie..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleSearch}
+      />
 
-        <a className="btn" href="/login">
-          Recommendations
-        </a>
-      </div>
-    </>
+      <button className="btn" onClick={handleRecommendations}>
+        Recommendations
+      </button>
+    </div>
   );
 }
