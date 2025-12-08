@@ -34,8 +34,10 @@ def create_admin():
     admin_pwd = settings.ADMIN_PASSWORD
 
     existing_admin = users_collection.find_one(
-        {"role": "admin"},
-        {"email": admin_email}
+        {
+            "role": "admin",
+            "email": admin_email
+        }
     )
 
     if existing_admin:
@@ -47,7 +49,8 @@ def create_admin():
         "email": admin_email,
         "password": hash_password(admin_pwd),
         "algorithm": {},
-        "role": "admin"
+        "role": "admin",
+        "history": []
     }
 
     users_collection.insert_one(admin)
