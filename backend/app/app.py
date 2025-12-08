@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 
 from app.routers import user, auth, movie
 from app.routers.movie import get_movies_specific
@@ -169,47 +169,105 @@ def propositions(
     current_user=Depends(get_current_user)
 ):
     tags = {
-        'happy': {
-            'Animation': 5
+        "happy": {
+            "Comedy": 42,
+            "Animation": 36,
+            "Family": 28,
+            "Music": 19,
+            "Musical": 16,
+            "Romance": 14,
+            "Fantasy": 12
         },
-        'sad': {
-            'Animation': 5
+        "sad": {
+            "Drama": 45,
+            "Romance": 32,
+            "Biography": 21,
+            "War": 18,
+            "History": 16,
+            "Music": 12,
+            "Animation": 9
         },
-        'angry': {
-            'Animation': 5
+        "angry": {
+            "Action": 48,
+            "Thriller": 39,
+            "Crime": 28,
+            "Sci-Fi": 22,
+            "War": 20,
+            "Horror": 18,
+            "Animation": 8
         },
-        'relaxed': {
-            'Animation': 5
+        "relaxed": {
+            "Family": 34,
+            "Animation": 38,
+            "Fantasy": 22,
+            "Documentary": 20,
+            "Romance": 17,
+            "Comedy": 15
         },
-        'excited': {
-            'Animation': 5
+        "excited": {
+            "Action": 50,
+            "Adventure": 41,
+            "Sci-Fi": 33,
+            "Thriller": 29,
+            "Fantasy": 25,
+            "Sport": 18,
+            "Animation": 16
         },
-        'anxious': {
-            'Animation': 5
+        "anxious": {
+            "Thriller": 36,
+            "Horror": 34,
+            "Mystery": 27,
+            "Crime": 24,
+            "Sci-Fi": 19,
+            "Animation": 7
         },
-        'bored': {
-            'Animation': 5
+        "bored": {
+            "Comedy": 37,
+            "Game-Show": 32,
+            "Reality-TV": 29,
+            "Talk-Show": 21,
+            "Animation": 26
         },
-        'nostalgic': {
-            'Animation': 5
+        "nostalgic": {
+            "Family": 33,
+            "Animation": 35,
+            "Fantasy": 23,
+            "Adventure": 21,
+            "Music": 19,
+            "Romance": 15
         },
-        'confident': {
-            'Animation': 5
+        "confident": {
+            "Action": 35,
+            "Sport": 28,
+            "Biography": 26,
+            "History": 20,
+            "Adventure": 18,
+            "Animation": 9
         },
-        'romantic': {
-            'Animation': 5
+        "romantic": {
+            "Romance": 48,
+            "Drama": 34,
+            "Music": 26,
+            "Comedy": 20,
+            "Fantasy": 14,
+            "Animation": 11
         }
     }
 
     emotions_list = emotions.split(',')
     user = user_model(current_user)
 
-    return Matcher.get_matches(
-        emotions_list,
-        get_movies_specific,
-        tags,
-        user['history']
-    )
+    try:
+        result = Matcher().get_matches(
+            emotions_list,
+            get_movies_specific,
+            tags,
+            user['history']
+        )
+    except Exception as e:
+        print(f"ERROR: {e}")
+        raise HTTPException(status_code=500, detail="bhfvuwlbf")
+    return result
 
     # query = funkcja_kajetana(emotions_list)
     # pass user to some Kajetan function
