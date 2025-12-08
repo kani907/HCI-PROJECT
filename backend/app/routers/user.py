@@ -137,7 +137,7 @@ def add_movie(
     try:
         get_movie_id(movie_id)
     except HTTPException:
-        raise HTTPException(status_code=404, description="movie not found")
+        raise HTTPException(status_code=404, detail="movie not found")
 
     user_id = ObjectId(current_user["_id"])
 
