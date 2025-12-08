@@ -29,6 +29,18 @@ def create_user(user: UserCreate):
     new_user = dict(user)
     new_user["password"] = hash_password(user.password)
     new_user['role'] = user.role
+    new_user['algorithm'] = {
+        "happy": {},
+        "sad": {},
+        "angry": {},
+        "relaxed": {},
+        "excited": {},
+        "anxious": {},
+        "bored": {},
+        "nostalgic": {},
+        "confident": {},
+        "romantic": {}
+    }
 
     # is email unique?
     if users_collection.find_one({"email": new_user["email"]}):
