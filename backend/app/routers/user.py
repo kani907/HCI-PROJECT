@@ -6,6 +6,7 @@ from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from app.models.user_model import user_model
 from app.core.security import hash_password
 from app.dependencies import get_current_user, require_admin
+from app.routers.movie import get_movie_id
 
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -17,10 +18,10 @@ router = APIRouter(
 
 
 def action_permitted(current_user, id):
-    if current_user.get('role') != 'admin':
-        if user_model(current_user.get('id')) != id:
-            return False
-    return True
+    if current_user.get("role") == "admin":
+        return True
+
+    return str(current_user["_id"]) == id
 
 
 @router.post("/add", response_model=UserResponse)
@@ -30,11 +31,7 @@ def create_user(user: UserCreate):
     new_user['role'] = user.role
 
     # is email unique?
-    isUnique = True
-    for db_user in users_collection.find():
-        if user_model(db_user)["email"] == new_user["email"]:
-            isUnique = False
-    if not isUnique:
+    if users_collection.find_one({"email": new_user["email"]}):
         raise HTTPException(status_code=409,
                             detail="this email is already registered")
 
@@ -88,6 +85,8 @@ def update_user(id: str,
 
     if "password" in update_data:
         update_data["password"] = hash_password(update_data["password"])
+    if "role" in update_data:
+        del update_data["role"]
 
     result = users_collection.update_one(
         {"_id": obj_id},
@@ -127,4 +126,30 @@ def delete_my_account(current_user=Depends(get_current_user)):
 
     return {
         "message": "Your account has been permanently deleted"
+    }
+
+
+@router.post("/add_movie/{movie_id}")
+def add_movie(
+    movie_id: str,
+    current_user=Depends(get_current_user)
+):
+    try:
+        get_movie_id(movie_id)
+    except HTTPException:
+        raise HTTPException(status_code=404, description="movie not found")
+
+    user_id = ObjectId(current_user["_id"])
+
+    result = users_collection.update_one(
+        {"_id": user_id},
+        {"$push": {"history": movie_id}}
+    )
+
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "message": "Movie added to history",
+        "movie_id": movie_id
     }

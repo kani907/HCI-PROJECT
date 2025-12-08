@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, Field
+from typing import Optional, List
 
 
 class UserCreate(BaseModel):
@@ -8,6 +8,7 @@ class UserCreate(BaseModel):
     password: str
     algorithm: dict
     role: str = "user"
+    history: List[str] = Field(default_factory=list)
 
 
 class UserResponse(BaseModel):
@@ -16,6 +17,7 @@ class UserResponse(BaseModel):
     email: str
     algorithm: dict
     role: str
+    history: List[str] = Field(default_factory=list)
 
 
 class UserUpdate(BaseModel):
@@ -23,3 +25,4 @@ class UserUpdate(BaseModel):
     email: Optional[str] = None
     password: Optional[str] = None
     algorithm: Optional[dict] = None
+    history: List[str] = None
