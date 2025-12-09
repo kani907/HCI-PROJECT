@@ -23,22 +23,30 @@ export default function ForYou() {
   const [movies, setMovies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState("");
-
   const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) router.push("/login");
+
+    const savedSelected = localStorage.getItem("selectedEmotions");
+    const savedMovies = localStorage.getItem("forYouMovies");
+
+    if (savedSelected) setSelected(JSON.parse(savedSelected));
+    if (savedMovies) setMovies(JSON.parse(savedMovies));
   }, [router]);
 
   const toggleEmotion = (emotion: string) => {
+    let newSelected: string[];
     if (selected.includes(emotion)) {
-      setSelected(selected.filter(e => e !== emotion));
+      newSelected = selected.filter(e => e !== emotion);
+    } else if (selected.length < 3) {
+      newSelected = [...selected, emotion];
+    } else {
       return;
     }
-    if (selected.length < 3) {
-      setSelected([...selected, emotion]);
-    }
+    setSelected(newSelected);
+    localStorage.setItem("selectedEmotions", JSON.stringify(newSelected));
   };
 
   const getMovies = async () => {
@@ -60,14 +68,12 @@ export default function ForYou() {
 
       const res = await fetch(
         `http://localhost:8000/for_you?emotions=${emotionsParam}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const data = await res.json();
       setMovies(data);
-
+      localStorage.setItem("forYouMovies", JSON.stringify(data));
     } finally {
       clearInterval(interval);
       setLoading(false);
@@ -137,7 +143,7 @@ export default function ForYou() {
       <style jsx>{`
         .orange-frame {
           width: 100%;
-          min-height: 68vh;
+          min-height: 69vh;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
