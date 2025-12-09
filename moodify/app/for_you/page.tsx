@@ -29,11 +29,20 @@ export default function ForYou() {
     const token = localStorage.getItem("token");
     if (!token) router.push("/login");
 
-    const savedSelected = localStorage.getItem("selectedEmotions");
-    const savedMovies = localStorage.getItem("forYouMovies");
+    const fromMoviePage = sessionStorage.getItem("fromMoviePage");
 
-    if (savedSelected) setSelected(JSON.parse(savedSelected));
-    if (savedMovies) setMovies(JSON.parse(savedMovies));
+    if (fromMoviePage === "true") {
+      const savedSelected = sessionStorage.getItem("selectedEmotions");
+      const savedMovies = sessionStorage.getItem("forYouMovies");
+      if (savedSelected) setSelected(JSON.parse(savedSelected));
+      if (savedMovies) setMovies(JSON.parse(savedMovies));
+      sessionStorage.removeItem("fromMoviePage");
+    } else {
+      setSelected([]);
+      setMovies([]);
+      sessionStorage.removeItem("selectedEmotions");
+      sessionStorage.removeItem("forYouMovies");
+    }
   }, [router]);
 
   const toggleEmotion = (emotion: string) => {
@@ -46,7 +55,7 @@ export default function ForYou() {
       return;
     }
     setSelected(newSelected);
-    localStorage.setItem("selectedEmotions", JSON.stringify(newSelected));
+    sessionStorage.setItem("selectedEmotions", JSON.stringify(newSelected));
   };
 
   const getMovies = async () => {
@@ -73,11 +82,16 @@ export default function ForYou() {
 
       const data = await res.json();
       setMovies(data);
-      localStorage.setItem("forYouMovies", JSON.stringify(data));
+      sessionStorage.setItem("forYouMovies", JSON.stringify(data));
     } finally {
       clearInterval(interval);
       setLoading(false);
     }
+  };
+
+  const goToMovie = (id: string) => {
+    sessionStorage.setItem("fromMoviePage", "true");
+    router.push(`/movie/${id}`);
   };
 
   return (
@@ -123,7 +137,7 @@ export default function ForYou() {
                 <div
                   className="card"
                   key={movie.id}
-                  onClick={() => router.push(`/movie/${movie.id}`)}
+                  onClick={() => goToMovie(movie.id)}
                   style={{ cursor: "pointer" }}
                 >
                   <div className="card-img" />
