@@ -8,6 +8,7 @@ class UserCreate(BaseModel):
     password: str
     role: str = "user"
     history: List[str] = Field(default_factory=list)
+    algorithm: dict[str, dict[str, int]] = None
 
 
 class UserResponse(BaseModel):

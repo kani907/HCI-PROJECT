@@ -53,16 +53,89 @@ def create_admin():
         "email": admin_email,
         "password": hash_password(admin_pwd),
         "algorithm": {
-            "happy": {},
-            "sad": {},
-            "angry": {},
-            "relaxed": {},
-            "excited": {},
-            "anxious": {},
-            "bored": {},
-            "nostalgic": {},
-            "confident": {},
-            "romantic": {}
+            "happy": {
+                "Comedy": 42,
+                "Animation": 36,
+                "Family": 28,
+                "Music": 19,
+                "Musical": 16,
+                "Romance": 14,
+                "Fantasy": 12
+            },
+            "sad": {
+                "Drama": 45,
+                "Romance": 32,
+                "Biography": 21,
+                "War": 18,
+                "History": 16,
+                "Music": 12,
+                "Animation": 9
+            },
+            "angry": {
+                "Action": 48,
+                "Thriller": 39,
+                "Crime": 28,
+                "Sci-Fi": 22,
+                "War": 20,
+                "Horror": 18,
+                "Animation": 8
+            },
+            "relaxed": {
+                "Family": 34,
+                "Animation": 38,
+                "Fantasy": 22,
+                "Documentary": 20,
+                "Romance": 17,
+                "Comedy": 15
+            },
+            "excited": {
+                "Action": 50,
+                "Adventure": 41,
+                "Sci-Fi": 33,
+                "Thriller": 29,
+                "Fantasy": 25,
+                "Sport": 18,
+                "Animation": 16
+            },
+            "anxious": {
+                "Thriller": 36,
+                "Horror": 34,
+                "Mystery": 27,
+                "Crime": 24,
+                "Sci-Fi": 19,
+                "Animation": 7
+            },
+            "bored": {
+                "Comedy": 37,
+                "Game-Show": 32,
+                "Reality-TV": 29,
+                "Talk-Show": 21,
+                "Animation": 26
+            },
+            "nostalgic": {
+                "Family": 33,
+                "Animation": 35,
+                "Fantasy": 23,
+                "Adventure": 21,
+                "Music": 19,
+                "Romance": 15
+            },
+            "confident": {
+                "Action": 35,
+                "Sport": 28,
+                "Biography": 26,
+                "History": 20,
+                "Adventure": 18,
+                "Animation": 9
+            },
+            "romantic": {
+                "Romance": 48,
+                "Drama": 34,
+                "Music": 26,
+                "Comedy": 20,
+                "Fantasy": 14,
+                "Animation": 11
+            }
         },
         "role": "admin",
         "history": []
@@ -168,92 +241,6 @@ def propositions(
     emotions: str,
     current_user=Depends(get_current_user)
 ):
-    tags = {
-        "happy": {
-            "Comedy": 42,
-            "Animation": 36,
-            "Family": 28,
-            "Music": 19,
-            "Musical": 16,
-            "Romance": 14,
-            "Fantasy": 12
-        },
-        "sad": {
-            "Drama": 45,
-            "Romance": 32,
-            "Biography": 21,
-            "War": 18,
-            "History": 16,
-            "Music": 12,
-            "Animation": 9
-        },
-        "angry": {
-            "Action": 48,
-            "Thriller": 39,
-            "Crime": 28,
-            "Sci-Fi": 22,
-            "War": 20,
-            "Horror": 18,
-            "Animation": 8
-        },
-        "relaxed": {
-            "Family": 34,
-            "Animation": 38,
-            "Fantasy": 22,
-            "Documentary": 20,
-            "Romance": 17,
-            "Comedy": 15
-        },
-        "excited": {
-            "Action": 50,
-            "Adventure": 41,
-            "Sci-Fi": 33,
-            "Thriller": 29,
-            "Fantasy": 25,
-            "Sport": 18,
-            "Animation": 16
-        },
-        "anxious": {
-            "Thriller": 36,
-            "Horror": 34,
-            "Mystery": 27,
-            "Crime": 24,
-            "Sci-Fi": 19,
-            "Animation": 7
-        },
-        "bored": {
-            "Comedy": 37,
-            "Game-Show": 32,
-            "Reality-TV": 29,
-            "Talk-Show": 21,
-            "Animation": 26
-        },
-        "nostalgic": {
-            "Family": 33,
-            "Animation": 35,
-            "Fantasy": 23,
-            "Adventure": 21,
-            "Music": 19,
-            "Romance": 15
-        },
-        "confident": {
-            "Action": 35,
-            "Sport": 28,
-            "Biography": 26,
-            "History": 20,
-            "Adventure": 18,
-            "Animation": 9
-        },
-        "romantic": {
-            "Romance": 48,
-            "Drama": 34,
-            "Music": 26,
-            "Comedy": 20,
-            "Fantasy": 14,
-            "Animation": 11
-        }
-    }
-
     emotions_list = emotions.split(',')
     user = user_model(current_user)
 
@@ -261,7 +248,7 @@ def propositions(
         result = Matcher().get_matches(
             emotions_list,
             get_movies_specific,
-            tags,
+            user["algorithm"],
             user['history']
         )
     except Exception as e:

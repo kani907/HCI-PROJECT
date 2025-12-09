@@ -1,4 +1,5 @@
 from typing import Callable
+import random
 class Matcher:
     def __init__(self):
         pass
@@ -13,16 +14,56 @@ class Matcher:
             for emotion in emotions:
                 cur_tags = list(tags[emotion].keys())
                 for tag in cur_tags:
-                    print(tag)
+                    # print(tag)
                     if tags[emotion][tag] > 0:
                         ggg = ",".join(cur_tags).rstrip(",")
-                        print(ggg, "sraka")
+                        # print(ggg, "sraka")
                         temp_query = get_emotions_function(genres = tag, limit=lm)
-                        print(temp_query)
+                        # print(temp_query)
                         for entry in temp_query:
-                            print(entry)
+                            # print(entry)
                             if entry["id"] not in watched and entry["id"] not in added_titles:
                                 result_queries.append(entry)
                                 added_titles.add(entry["id"])
             lm+=10
+        genres = [
+                "Action",
+                "Adventure",
+                "Animation",
+                "Biography",
+                "Comedy",
+                "Crime",
+                "Documentary",
+                "Drama",
+                "Family",
+                "Fantasy",
+                "Film-Noir",
+                "Game-Show",
+                "History",
+                "Horror",
+                "Music",
+                "Musical",
+                "Mystery",
+                "News",
+                "Reality-TV",
+                "Romance",
+                "Sci-Fi",
+                "Short",
+                "Sport",
+                "Talk-Show",
+                "Thriller",
+                "War",
+                "Western"
+            ]
+
+        for _ in range(1000):
+            if len(result_queries) < 6:
+                genre = random.choice(genres)
+                temp_query = get_emotions_function(genres=genre, limit=100)
+                for entry in temp_query:
+                    if entry["id"] not in watched and entry["id"] not in added_titles:
+                        result_queries.append(entry)
+                        added_titles.add(entry["id"])
+            else:
+                break
         return list(result_queries)
