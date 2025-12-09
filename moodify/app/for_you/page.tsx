@@ -75,9 +75,8 @@ export default function ForYou() {
   };
 
   return (
-    <div className="orange-frame">
+    <div className={`orange-frame ${movies.length > 0 ? "expanded" : ""}`}>
       <div className="content-box">
-
         <h1 className="rec-title">Pick 3 emotions</h1>
 
         <div className="emotion-grid">
@@ -136,6 +135,28 @@ export default function ForYou() {
       </div>
 
       <style jsx>{`
+        .orange-frame {
+          width: 100%;
+          min-height: 68vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: center;
+          background: #d87800;
+          padding: 40px 0;
+        }
+
+        .orange-frame.expanded {
+          min-height: auto;
+        }
+
+        .content-box {
+          background: #222;
+          width: 80%;
+          padding: 40px;
+          border-radius: 4px;
+        }
+
         .emotion-grid {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
@@ -160,6 +181,33 @@ export default function ForYou() {
 
         .emotion-btn:hover {
           background: #ffe2c6;
+        }
+
+        .card-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 30px;
+          margin-top: 20px;
+        }
+
+        .card {
+          background: white;
+          color: black;
+          padding: 20px;
+          display: flex;
+          gap: 15px;
+          border-radius: 6px;
+        }
+
+        .card-img {
+          width: 60px;
+          height: 60px;
+          background: #ddd;
+          border-radius: 4px;
+        }
+
+        .card-text h3 {
+          margin: 0 0 5px;
         }
       `}</style>
     </div>
