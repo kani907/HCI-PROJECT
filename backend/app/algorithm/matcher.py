@@ -66,4 +66,9 @@ class Matcher:
                         added_titles.add(entry["id"])
             else:
                 break
-        return list(result_queries)
+
+        try:
+            result = list(result_queries)[:6]
+        except Exception:
+            result = list(result_queries)
+        return result
