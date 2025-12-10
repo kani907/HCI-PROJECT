@@ -62,9 +62,9 @@ class Matcher:
         new_tags = {}
         for genre in genres :
             for emotion in self._emotions:
-                if genre in new_tags:
+                if genre in new_tags and genre in tags[emotion]:
                     new_tags[genre] += tags[emotion][genre]
-                else:
+                elif genre in tags[emotion]:
                     new_tags[genre] = tags[emotion][genre]
         temp_tags = [(key, new_tags[key]) for key in new_tags.keys()]
         temp_tags.sort(key=lambda x: x[1], reverse=True)
