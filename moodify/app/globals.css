@@ -229,3 +229,100 @@ footer {
 
   box-sizing: border-box;
 }
+
+.split {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* LEWA STRONA (ciemna) */
+.left {
+  flex: 1;
+  background: #111;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.left h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+/* PRAWA STRONA (pomarańczowa) */
+.right {
+  flex: 1;
+  background: #d87800;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.right h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.orange {
+  background: #d87800;
+}
+
+/* FORM BOX */
+.form-box {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-box input {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #222;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.form-box input:focus {
+  background: #333;
+}
+
+.form-box a {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #bbb;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.form-box a:hover {
+  color: white;
+}
+
+/* BUTTONS */
+.btn {
+  background: #ff7b00;
+  padding: 12px;
+  font-size: 17px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  background: #ff962b;
+}

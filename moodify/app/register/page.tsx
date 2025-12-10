@@ -73,7 +73,9 @@ export default function Register() {
             Register
           </button>
 
-          <a href="#">Forgot password?</a>
+          <a href="/" className="back-link" style={{ marginTop: "15px", display: "block" }}>
+            Back to Home
+          </a>
         </div>
       </div>
     </div>
