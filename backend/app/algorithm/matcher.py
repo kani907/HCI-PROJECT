@@ -68,7 +68,10 @@ class Matcher:
                 break
 
         try:
-            result = list(result_queries)[:6]
-        except Exception:
+            result = list(result_queries)
+            random.shuffle(result)
+            result = result[:6]
+        except Exception as e:
+            print(e)
             result = list(result_queries)
         return result
