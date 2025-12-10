@@ -29,8 +29,8 @@ def create_user(user: UserCreate):
     new_user = dict(user)
     new_user["password"] = hash_password(user.password)
     new_user['role'] = user.role
-    if 'algorithm' not in new_user.keys():
-        new_user['algorithm'] = {
+    if not new_user.get("algorithm"):
+        new_user["algorithm"] = {
             "happy": {},
             "sad": {},
             "angry": {},
@@ -42,6 +42,7 @@ def create_user(user: UserCreate):
             "confident": {},
             "romantic": {}
         }
+
 
     # is email unique?
     if users_collection.find_one({"email": new_user["email"]}):
