@@ -5,34 +5,37 @@ import { useRouter } from "next/navigation";
 
 export default function Recommends() {
   const [movies, setMovies] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
+  const pageSize = 6;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      console.warn("No token, user not logged in");
       setLoading(false);
       return;
     }
 
     fetch("http://localhost:8000/top_list", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
+      headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => {
         setMovies(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, []);
+
+  const totalPages = Math.ceil(movies.length / pageSize);
+  const startIndex = (page - 1) * pageSize;
+  const pageMovies = movies.slice(startIndex, startIndex + pageSize);
+
+  const next = () => page < totalPages && setPage(p => p + 1);
+  const prev = () => page > 1 && setPage(p => p - 1);
 
   if (loading) {
     return (
@@ -51,7 +54,7 @@ export default function Recommends() {
         <h1 className="rec-title">Moodify recommends...</h1>
 
         <div className="card-grid">
-          {movies.map(movie => (
+          {pageMovies.map(movie => (
             <div
               className="card"
               key={movie.id}
@@ -67,6 +70,30 @@ export default function Recommends() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "25px", gap: "15px" }}>
+          <button
+            className="btn-small-outline"
+            onClick={prev}
+            disabled={page === 1}
+            style={{ opacity: page === 1 ? 0.5 : 1 }}
+          >
+            Previous
+          </button>
+
+          <span style={{ alignSelf: "center" }}>
+            Page {page} / {totalPages}
+          </span>
+
+          <button
+            className="btn-small-outline"
+            onClick={next}
+            disabled={page === totalPages}
+            style={{ opacity: page === totalPages ? 0.5 : 1 }}
+          >
+            Next
+          </button>
         </div>
 
       </div>

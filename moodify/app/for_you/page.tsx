@@ -47,6 +47,7 @@ export default function ForYou() {
 
   const toggleEmotion = (emotion: string) => {
     let newSelected: string[];
+
     if (selected.includes(emotion)) {
       newSelected = selected.filter(e => e !== emotion);
     } else if (selected.length < 3) {
@@ -54,12 +55,13 @@ export default function ForYou() {
     } else {
       return;
     }
+
     setSelected(newSelected);
     sessionStorage.setItem("selectedEmotions", JSON.stringify(newSelected));
   };
 
   const getMovies = async () => {
-    if (selected.length !== 3) return;
+    if (selected.length === 0) return;
 
     setLoading(true);
 
@@ -97,7 +99,7 @@ export default function ForYou() {
   return (
     <div className={`orange-frame ${movies.length > 0 ? "expanded" : ""}`}>
       <div className="content-box">
-        <h1 className="rec-title">Pick 3 emotions</h1>
+        <h1 className="rec-title">Pick up to 3 emotions</h1>
 
         <div className="emotion-grid">
           {EMOTIONS.map(e => (
@@ -113,8 +115,11 @@ export default function ForYou() {
 
         <button
           className="btn"
-          style={{ marginTop: "20px", opacity: selected.length === 3 ? 1 : 0.5 }}
-          disabled={selected.length !== 3}
+          style={{
+            marginTop: "20px",
+            opacity: selected.length > 0 ? 1 : 0.5
+          }}
+          disabled={selected.length === 0}
           onClick={getMovies}
         >
           Get recommendations

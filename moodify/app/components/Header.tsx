@@ -5,18 +5,23 @@ import { useRouter, usePathname } from "next/navigation";
 
 export default function Header() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    setHydrated(true);
     const token = localStorage.getItem("token");
     setLoggedIn(!!token);
   }, [pathname]);
 
   const logout = () => {
     localStorage.removeItem("token");
+    setLoggedIn(false);
     router.push("/login");
   };
+
+  if (!hydrated) return null;
 
   return (
     <header className="header">
