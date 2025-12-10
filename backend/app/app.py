@@ -11,7 +11,7 @@ from app.config import settings
 from app.algorithm.matcher import Matcher
 from fastapi.middleware.cors import CORSMiddleware
 
-
+import json
 import pandas as pd
 
 
@@ -32,116 +32,176 @@ app.include_router(movie.router)
 
 
 @app.on_event("startup")
-def create_admin():
+def create_predefined_users():
     admin_name = settings.ADMIN_NAME
     admin_email = settings.ADMIN_EMAIL
     admin_pwd = settings.ADMIN_PASSWORD
 
-    existing_admin = users_collection.find_one(
-        {
-            "role": "admin",
-            "email": admin_email
-        }
-    )
+    with open(settings.PREFERENCES_PATH) as fh:
+        preferences = json.load(fh)
 
-    if existing_admin:
-        print("\033[33mINFO:\033[0m     admin already in database")
-        return
+    for user_name in list(preferences.keys()):
+        if user_name == 'admin':
+            existing_admin = users_collection.find_one(
+                {
+                    "role": "admin",
+                    "email": admin_email
+                }
+            )
 
-    admin = {
-        "name": admin_name,
-        "email": admin_email,
-        "password": hash_password(admin_pwd),
-        "algorithm": {
-            "happy": {
-                "Comedy": 42,
-                "Animation": 36,
-                "Family": 28,
-                "Music": 19,
-                "Musical": 16,
-                "Romance": 14,
-                "Fantasy": 12
-            },
-            "sad": {
-                "Drama": 45,
-                "Romance": 32,
-                "Biography": 21,
-                "War": 18,
-                "History": 16,
-                "Music": 12,
-                "Animation": 9
-            },
-            "angry": {
-                "Action": 48,
-                "Thriller": 39,
-                "Crime": 28,
-                "Sci-Fi": 22,
-                "War": 20,
-                "Horror": 18,
-                "Animation": 8
-            },
-            "relaxed": {
-                "Family": 34,
-                "Animation": 38,
-                "Fantasy": 22,
-                "Documentary": 20,
-                "Romance": 17,
-                "Comedy": 15
-            },
-            "excited": {
-                "Action": 50,
-                "Adventure": 41,
-                "Sci-Fi": 33,
-                "Thriller": 29,
-                "Fantasy": 25,
-                "Sport": 18,
-                "Animation": 16
-            },
-            "anxious": {
-                "Thriller": 36,
-                "Horror": 34,
-                "Mystery": 27,
-                "Crime": 24,
-                "Sci-Fi": 19,
-                "Animation": 7
-            },
-            "bored": {
-                "Comedy": 37,
-                "Game-Show": 32,
-                "Reality-TV": 29,
-                "Talk-Show": 21,
-                "Animation": 26
-            },
-            "nostalgic": {
-                "Family": 33,
-                "Animation": 35,
-                "Fantasy": 23,
-                "Adventure": 21,
-                "Music": 19,
-                "Romance": 15
-            },
-            "confident": {
-                "Action": 35,
-                "Sport": 28,
-                "Biography": 26,
-                "History": 20,
-                "Adventure": 18,
-                "Animation": 9
-            },
-            "romantic": {
-                "Romance": 48,
-                "Drama": 34,
-                "Music": 26,
-                "Comedy": 20,
-                "Fantasy": 14,
-                "Animation": 11
+            if existing_admin:
+                print("\033[33mINFO:\033[0m     admin already in database")
+                continue
+
+            admin = {
+                "name": admin_name,
+                "email": admin_email,
+                "password": hash_password(admin_pwd),
+                "algorithm": preferences['admin'],
+                "role": "admin",
+                "history": []
             }
-        },
-        "role": "admin",
-        "history": []
-    }
 
-    users_collection.insert_one(admin)
+            users_collection.insert_one(admin)
+
+            print("\033[33mINFO:\033[0m     admin inserted")
+
+            continue
+
+        existing_user = users_collection.find_one({
+            "email": user_name,
+            "role": "user"
+        })
+
+        if existing_user:
+            print(f"\033[33mINFO:\033[0m     {user_name} already in database")
+            continue
+
+        new_user = {
+            "name": user_name,
+            "email": user_name,
+            "password": hash_password(user_name),
+            "algorithm": preferences[user_name],
+            "role": "user",
+            "history": []
+        }
+
+        users_collection.insert_one(new_user)
+
+        print(f"\033[33mINFO:\033[0m     {user_name} inserted")
+
+
+# @app.on_event("startup")
+# def create_admin():
+#     admin_name = settings.ADMIN_NAME
+#     admin_email = settings.ADMIN_EMAIL
+#     admin_pwd = settings.ADMIN_PASSWORD
+
+#     existing_admin = users_collection.find_one(
+#         {
+#             "role": "admin",
+#             "email": admin_email
+#         }
+#     )
+
+#     if existing_admin:
+#         print("\033[33mINFO:\033[0m     admin already in database")
+#         return
+
+#     admin = {
+#         "name": admin_name,
+#         "email": admin_email,
+#         "password": hash_password(admin_pwd),
+#         "algorithm": {
+#             "happy": {
+#                 "Comedy": 42,
+#                 "Animation": 36,
+#                 "Family": 28,
+#                 "Music": 19,
+#                 "Musical": 16,
+#                 "Romance": 14,
+#                 "Fantasy": 12
+#             },
+#             "sad": {
+#                 "Drama": 45,
+#                 "Romance": 32,
+#                 "Biography": 21,
+#                 "War": 18,
+#                 "History": 16,
+#                 "Music": 12,
+#                 "Animation": 9
+#             },
+#             "angry": {
+#                 "Action": 48,
+#                 "Thriller": 39,
+#                 "Crime": 28,
+#                 "Sci-Fi": 22,
+#                 "War": 20,
+#                 "Horror": 18,
+#                 "Animation": 8
+#             },
+#             "relaxed": {
+#                 "Family": 34,
+#                 "Animation": 38,
+#                 "Fantasy": 22,
+#                 "Documentary": 20,
+#                 "Romance": 17,
+#                 "Comedy": 15
+#             },
+#             "excited": {
+#                 "Action": 50,
+#                 "Adventure": 41,
+#                 "Sci-Fi": 33,
+#                 "Thriller": 29,
+#                 "Fantasy": 25,
+#                 "Sport": 18,
+#                 "Animation": 16
+#             },
+#             "anxious": {
+#                 "Thriller": 36,
+#                 "Horror": 34,
+#                 "Mystery": 27,
+#                 "Crime": 24,
+#                 "Sci-Fi": 19,
+#                 "Animation": 7
+#             },
+#             "bored": {
+#                 "Comedy": 37,
+#                 "Game-Show": 32,
+#                 "Reality-TV": 29,
+#                 "Talk-Show": 21,
+#                 "Animation": 26
+#             },
+#             "nostalgic": {
+#                 "Family": 33,
+#                 "Animation": 35,
+#                 "Fantasy": 23,
+#                 "Adventure": 21,
+#                 "Music": 19,
+#                 "Romance": 15
+#             },
+#             "confident": {
+#                 "Action": 35,
+#                 "Sport": 28,
+#                 "Biography": 26,
+#                 "History": 20,
+#                 "Adventure": 18,
+#                 "Animation": 9
+#             },
+#             "romantic": {
+#                 "Romance": 48,
+#                 "Drama": 34,
+#                 "Music": 26,
+#                 "Comedy": 20,
+#                 "Fantasy": 14,
+#                 "Animation": 11
+#             }
+#         },
+#         "role": "admin",
+#         "history": []
+#     }
+
+#     users_collection.insert_one(admin)
 
 
 @app.on_event("startup")
