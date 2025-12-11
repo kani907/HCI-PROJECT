@@ -9,14 +9,17 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
 
   const noLayoutRoutes = ["/login", "/register"];
-
   const hideLayout = noLayoutRoutes.includes(pathname);
 
   return (
     <html lang="en">
       <body>
         {!hideLayout && <Header />}
-        {children}
+
+        <div className={hideLayout ? "" : "page-container"}>
+          {children}
+        </div>
+
         {!hideLayout && <Footer />}
       </body>
     </html>
