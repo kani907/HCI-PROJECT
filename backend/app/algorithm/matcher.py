@@ -61,7 +61,7 @@ class Matcher:
         ]
         new_tags = {}
         for genre in genres :
-            for emotion in self._emotions:
+            for emotion in emotions:
                 if genre in new_tags and genre in tags[emotion]:
                     new_tags[genre] += tags[emotion][genre]
                 elif genre in tags[emotion]:
