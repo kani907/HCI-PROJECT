@@ -40,7 +40,7 @@ export default function Landing() {
         Cinema that feels you.
       </p>
 
-      {/* SEARCH BAR + BUTTON */}
+      {/* SEARCH INPUT + BUTTON */}
       <div style={{ display: "flex", gap: "10px" }}>
         <input
           style={{
@@ -62,7 +62,7 @@ export default function Landing() {
         <button
           onClick={handleSearch}
           style={{
-            padding: "14px 20px",
+            padding: "14px 22px",
             fontSize: "16px",
             borderRadius: "8px",
             cursor: "pointer",
