@@ -73,7 +73,13 @@ export default function Login() {
             Sign In
           </button>
 
-          <a href="#">Forgot password?</a>
+          <a href="/contact" style={{ display: "block", marginTop: "10px" }}>
+            Forgot password?
+          </a>
+
+          <a href="/" style={{ display: "block", marginTop: "10px" }}>
+            Back to Home
+          </a>
         </div>
       </div>
 

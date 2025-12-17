@@ -1,0 +1,147 @@
+{
+    "light": {
+        "happy": {"Comedy": 40, "Animation": 38, "Family": 32, "Fantasy": 20, "Romance": 17},
+        "sad": {"Animation": 18, "Drama": 16, "Romance": 12, "Fantasy": 10},
+        "angry": {"Action": 30, "Animation": 14, "Thriller": 12, "Crime": 10},
+        "relaxed": {"Animation": 42, "Family": 35, "Fantasy": 28, "Documentary": 15},
+        "excited": {"Adventure": 35, "Action": 30, "Animation": 22, "Sci-Fi": 18},
+        "anxious": {"Mystery": 18, "Animation": 14, "Thriller": 13},
+        "bored": {"Comedy": 42, "Animation": 28, "Reality-TV": 14},
+        "nostalgic": {"Animation": 45, "Family": 30, "Fantasy": 25},
+        "confident": {"Action": 25, "Adventure": 22, "Animation": 18},
+        "romantic": {"Romance": 25, "Comedy": 20, "Animation": 15}
+    },
+    "serious": {
+        "happy": {"Drama": 28, "Comedy": 25, "Animation": 14},
+        "sad": {"Drama": 52, "Biography": 35, "War": 25, "Animation": 13},
+        "angry": {"Crime": 40, "Thriller": 33, "Action": 28, "Animation": 9},
+        "relaxed": {"Documentary": 38, "History": 30, "Animation": 16},
+        "excited": {"Thriller": 40, "Action": 38, "Adventure": 30, "Sci-Fi": 20},
+        "anxious": {"Mystery": 33, "Thriller": 32, "Animation": 12},
+        "bored": {"Film-Noir": 30, "History": 20, "Animation": 15},
+        "nostalgic": {"Drama": 30, "History": 28, "Animation": 20},
+        "confident": {"Biography": 32, "History": 27, "Action": 20, "Animation": 10},
+        "romantic": {"Romance": 34, "Drama": 30, "Animation": 12}
+    },
+    "action": {
+        "happy": {"Action": 35, "Adventure": 32, "Animation": 20},
+        "sad": {"Drama": 22, "Action": 18, "Animation": 14},
+        "angry": {"Action": 55, "Sci-Fi": 35, "Thriller": 33, "Animation": 12},
+        "relaxed": {"Sci-Fi": 28, "Animation": 22, "Adventure": 19},
+        "excited": {"Action": 60, "Adventure": 45, "Sci-Fi": 40, "Animation": 18},
+        "anxious": {"Thriller": 34, "Horror": 28, "Animation": 10},
+        "bored": {"Action": 30, "Game-Show": 24, "Animation": 17},
+        "nostalgic": {"Adventure": 32, "Animation": 26},
+        "confident": {"Action": 48, "Adventure": 32, "Animation": 19},
+        "romantic": {"Romance": 20, "Comedy": 18, "Animation": 15}
+    },
+    "family": {
+        "happy": {"Family": 45, "Animation": 41, "Comedy": 30, "Music": 18},
+        "sad": {"Family": 20, "Drama": 18, "Animation": 17},
+        "angry": {"Comedy": 22, "Family": 20, "Animation": 18},
+        "relaxed": {"Family": 50, "Animation": 48, "Fantasy": 25},
+        "excited": {"Adventure": 30, "Animation": 28, "Family": 26},
+        "anxious": {"Animation": 20, "Mystery": 16},
+        "bored": {"Family": 35, "Comedy": 32, "Animation": 29},
+        "nostalgic": {"Animation": 52, "Family": 35, "Fantasy": 32},
+        "confident": {"Family": 28, "Adventure": 23, "Animation": 20},
+        "romantic": {"Romance": 28, "Comedy": 22, "Animation": 18}
+    },
+    "artsy": {
+        "happy": {"Fantasy": 30, "Music": 25, "Animation": 18, "Comedy": 20},
+        "sad": {"Documentary": 28, "Drama": 25, "Biography": 22, "Animation": 12},
+        "angry": {"Thriller": 28, "Crime": 25, "Horror": 22, "Animation": 10},
+        "relaxed": {"Documentary": 40, "Fantasy": 30, "Animation": 20},
+        "excited": {"Fantasy": 32, "Adventure": 30, "Animation": 19},
+        "anxious": {"Mystery": 30, "Horror": 24, "Animation": 12},
+        "bored": {"Film-Noir": 30, "History": 25, "Animation": 18},
+        "nostalgic": {"Music": 28, "Fantasy": 24, "Animation": 20},
+        "confident": {"Biography": 26, "History": 23, "Animation": 14},
+        "romantic": {"Romance": 22, "Drama": 20, "Animation": 14}
+    },
+    "admin": {
+        "happy": {
+            "Comedy": 42,
+            "Animation": 36,
+            "Family": 28,
+            "Music": 19,
+            "Musical": 16,
+            "Romance": 14,
+            "Fantasy": 12
+        },
+        "sad": {
+            "Drama": 45,
+            "Romance": 32,
+            "Biography": 21,
+            "War": 18,
+            "History": 16,
+            "Music": 12,
+            "Animation": 9
+        },
+        "angry": {
+            "Action": 48,
+            "Thriller": 39,
+            "Crime": 28,
+            "Sci-Fi": 22,
+            "War": 20,
+            "Horror": 18,
+            "Animation": 8
+        },
+        "relaxed": {
+            "Family": 34,
+            "Animation": 38,
+            "Fantasy": 22,
+            "Documentary": 20,
+            "Romance": 17,
+            "Comedy": 15
+        },
+        "excited": {
+            "Action": 50,
+            "Adventure": 41,
+            "Sci-Fi": 33,
+            "Thriller": 29,
+            "Fantasy": 25,
+            "Sport": 18,
+            "Animation": 16
+        },
+        "anxious": {
+            "Thriller": 36,
+            "Horror": 34,
+            "Mystery": 27,
+            "Crime": 24,
+            "Sci-Fi": 19,
+            "Animation": 7
+        },
+        "bored": {
+            "Comedy": 37,
+            "Game-Show": 32,
+            "Reality-TV": 29,
+            "Talk-Show": 21,
+            "Animation": 26
+        },
+        "nostalgic": {
+            "Family": 33,
+            "Animation": 35,
+            "Fantasy": 23,
+            "Adventure": 21,
+            "Music": 19,
+            "Romance": 15
+        },
+        "confident": {
+            "Action": 35,
+            "Sport": 28,
+            "Biography": 26,
+            "History": 20,
+            "Adventure": 18,
+            "Animation": 9
+        },
+        "romantic": {
+            "Romance": 48,
+            "Drama": 34,
+            "Music": 26,
+            "Comedy": 20,
+            "Fantasy": 14,
+            "Animation": 11
+        }
+    }
+}

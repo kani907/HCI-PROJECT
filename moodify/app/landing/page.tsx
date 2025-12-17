@@ -6,42 +6,77 @@ export default function Landing() {
   const [query, setQuery] = useState("");
   const router = useRouter();
 
-  const handleSearch = (e) => {
-    if (e.key === "Enter" && query.trim() !== "") {
+  const handleSearch = () => {
+    if (query.trim() !== "") {
       router.push(`/search?q=${encodeURIComponent(query)}`);
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSearch();
+  };
+
   const handleRecommendations = () => {
     const token = localStorage.getItem("token");
-
-    if (token) {
-      router.push("/recommends");   // <-- user logged in
-    } else {
-      router.push("/login");        // <-- user NOT logged in
-    }
+    router.push(token ? "/recommends" : "/login");
   };
 
   return (
-    <div className="hero">
-      <h1>Moodify</h1>
-      <p>Cinema that feels you.</p>
+    <div
+      className="hero"
+      style={{
+        minHeight: "80vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        gap: "20px",
+      }}
+    >
+      <h1 style={{ fontSize: "64px", marginBottom: "10px" }}>Moodify</h1>
 
-      <input
-        style={{
-          padding: "10px",
-          width: "260px",
-          borderRadius: "4px",
-          border: "none",
-          marginTop: "10px",
-        }}
-        placeholder="Find a movie..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleSearch}
-      />
+      <p style={{ fontSize: "20px", opacity: 0.8 }}>
+        Cinema that feels you.
+      </p>
 
-      <button className="btn" onClick={handleRecommendations}>
+      {/* SEARCH INPUT + BUTTON */}
+      <div style={{ display: "flex", gap: "10px" }}>
+        <input
+          style={{
+            padding: "14px 18px",
+            width: "260px",
+            borderRadius: "8px",
+            border: "1px solid #555",
+            backgroundColor: "#222",
+            color: "white",
+            fontSize: "16px",
+            outline: "none",
+          }}
+          placeholder="Search for a movie..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+
+        <button
+          onClick={handleSearch}
+          style={{
+            padding: "14px 22px",
+            fontSize: "16px",
+            borderRadius: "8px",
+            cursor: "pointer",
+          }}
+        >
+          Search
+        </button>
+      </div>
+
+      <button
+        className="btn"
+        onClick={handleRecommendations}
+        style={{ marginTop: "10px", padding: "12px 26px", fontSize: "18px" }}
+      >
         Recommendations
       </button>
     </div>

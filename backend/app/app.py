@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 
 from app.routers import user, auth, movie
 from app.routers.movie import get_movies_specific
@@ -11,7 +11,7 @@ from app.config import settings
 from app.algorithm.matcher import Matcher
 from fastapi.middleware.cors import CORSMiddleware
 
-
+import json
 import pandas as pd
 
 
@@ -32,43 +32,63 @@ app.include_router(movie.router)
 
 
 @app.on_event("startup")
-def create_admin():
+def create_predefined_users():
     admin_name = settings.ADMIN_NAME
     admin_email = settings.ADMIN_EMAIL
     admin_pwd = settings.ADMIN_PASSWORD
 
-    existing_admin = users_collection.find_one(
-        {
-            "role": "admin",
-            "email": admin_email
+    with open(settings.PREFERENCES_PATH) as fh:
+        preferences = json.load(fh)
+
+    for user_name in list(preferences.keys()):
+        if user_name == 'admin':
+            existing_admin = users_collection.find_one(
+                {
+                    "role": "admin",
+                    "email": admin_email
+                }
+            )
+
+            if existing_admin:
+                print("\033[33mINFO:\033[0m     admin already in database")
+                continue
+
+            admin = {
+                "name": admin_name,
+                "email": admin_email,
+                "password": hash_password(admin_pwd),
+                "algorithm": preferences['admin'],
+                "role": "admin",
+                "history": []
+            }
+
+            users_collection.insert_one(admin)
+
+            print("\033[33mINFO:\033[0m     admin inserted")
+
+            continue
+
+        existing_user = users_collection.find_one({
+            "email": user_name,
+            "role": "user"
+        })
+
+        if existing_user:
+            print(f"\033[33mINFO:\033[0m     {user_name} already in database")
+            continue
+
+        new_user = {
+            "name": user_name,
+            "email": user_name,
+            "password": hash_password(user_name),
+            "algorithm": preferences[user_name],
+            "role": "user",
+            "history": []
         }
-    )
 
-    if existing_admin:
-        print("\033[33mINFO:\033[0m     admin already in database")
-        return
+        users_collection.insert_one(new_user)
 
-    admin = {
-        "name": admin_name,
-        "email": admin_email,
-        "password": hash_password(admin_pwd),
-        "algorithm": {
-            "happy": {},
-            "sad": {},
-            "angry": {},
-            "relaxed": {},
-            "excited": {},
-            "anxious": {},
-            "bored": {},
-            "nostalgic": {},
-            "confident": {},
-            "romantic": {}
-        },
-        "role": "admin",
-        "history": []
-    }
-
-    users_collection.insert_one(admin)
+        print(f"\033[33mINFO:\033[0m     {user_name} inserted")
 
 
 @app.on_event("startup")
@@ -168,48 +188,20 @@ def propositions(
     emotions: str,
     current_user=Depends(get_current_user)
 ):
-    tags = {
-        'happy': {
-            'Animation': 5
-        },
-        'sad': {
-            'Animation': 5
-        },
-        'angry': {
-            'Animation': 5
-        },
-        'relaxed': {
-            'Animation': 5
-        },
-        'excited': {
-            'Animation': 5
-        },
-        'anxious': {
-            'Animation': 5
-        },
-        'bored': {
-            'Animation': 5
-        },
-        'nostalgic': {
-            'Animation': 5
-        },
-        'confident': {
-            'Animation': 5
-        },
-        'romantic': {
-            'Animation': 5
-        }
-    }
-
     emotions_list = emotions.split(',')
     user = user_model(current_user)
 
-    return Matcher.get_matches(
-        emotions_list,
-        get_movies_specific,
-        tags,
-        user['history']
-    )
+    try:
+        result = Matcher().get_matches(
+            emotions_list,
+            get_movies_specific,
+            user["algorithm"],
+            user['history']
+        )
+    except Exception as e:
+        print(f"ERROR: {e}")
+        raise HTTPException(status_code=500, detail="bhfvuwlbf")
+    return result
 
     # query = funkcja_kajetana(emotions_list)
     # pass user to some Kajetan function

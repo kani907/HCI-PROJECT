@@ -23,26 +23,45 @@ export default function ForYou() {
   const [movies, setMovies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState("");
-
   const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) router.push("/login");
+
+    const fromMoviePage = sessionStorage.getItem("fromMoviePage");
+
+    if (fromMoviePage === "true") {
+      const savedSelected = sessionStorage.getItem("selectedEmotions");
+      const savedMovies = sessionStorage.getItem("forYouMovies");
+      if (savedSelected) setSelected(JSON.parse(savedSelected));
+      if (savedMovies) setMovies(JSON.parse(savedMovies));
+      sessionStorage.removeItem("fromMoviePage");
+    } else {
+      setSelected([]);
+      setMovies([]);
+      sessionStorage.removeItem("selectedEmotions");
+      sessionStorage.removeItem("forYouMovies");
+    }
   }, [router]);
 
   const toggleEmotion = (emotion: string) => {
+    let newSelected: string[];
+
     if (selected.includes(emotion)) {
-      setSelected(selected.filter(e => e !== emotion));
+      newSelected = selected.filter(e => e !== emotion);
+    } else if (selected.length < 3) {
+      newSelected = [...selected, emotion];
+    } else {
       return;
     }
-    if (selected.length < 3) {
-      setSelected([...selected, emotion]);
-    }
+
+    setSelected(newSelected);
+    sessionStorage.setItem("selectedEmotions", JSON.stringify(newSelected));
   };
 
   const getMovies = async () => {
-    if (selected.length !== 3) return;
+    if (selected.length === 0) return;
 
     setLoading(true);
 
@@ -60,25 +79,27 @@ export default function ForYou() {
 
       const res = await fetch(
         `http://localhost:8000/for_you?emotions=${emotionsParam}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const data = await res.json();
       setMovies(data);
-
+      sessionStorage.setItem("forYouMovies", JSON.stringify(data));
     } finally {
       clearInterval(interval);
       setLoading(false);
     }
   };
 
-  return (
-    <div className="orange-frame">
-      <div className="content-box">
+  const goToMovie = (id: string) => {
+    sessionStorage.setItem("fromMoviePage", "true");
+    router.push(`/movie/${id}`);
+  };
 
-        <h1 className="rec-title">Pick 3 emotions</h1>
+  return (
+    <div className={`orange-frame ${movies.length > 0 ? "expanded" : ""}`}>
+      <div className="content-box">
+        <h1 className="rec-title">Pick up to 3 emotions</h1>
 
         <div className="emotion-grid">
           {EMOTIONS.map(e => (
@@ -94,8 +115,11 @@ export default function ForYou() {
 
         <button
           className="btn"
-          style={{ marginTop: "20px", opacity: selected.length === 3 ? 1 : 0.5 }}
-          disabled={selected.length !== 3}
+          style={{
+            marginTop: "20px",
+            opacity: selected.length > 0 ? 1 : 0.5
+          }}
+          disabled={selected.length === 0}
           onClick={getMovies}
         >
           Get recommendations
@@ -118,7 +142,7 @@ export default function ForYou() {
                 <div
                   className="card"
                   key={movie.id}
-                  onClick={() => router.push(`/movie/${movie.id}`)}
+                  onClick={() => goToMovie(movie.id)}
                   style={{ cursor: "pointer" }}
                 >
                   <div className="card-img" />
@@ -136,6 +160,28 @@ export default function ForYou() {
       </div>
 
       <style jsx>{`
+        .orange-frame {
+          width: 100%;
+          min-height: 69vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: center;
+          background: #d87800;
+          padding: 40px 0;
+        }
+
+        .orange-frame.expanded {
+          min-height: auto;
+        }
+
+        .content-box {
+          background: #222;
+          width: 80%;
+          padding: 40px;
+          border-radius: 4px;
+        }
+
         .emotion-grid {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
@@ -160,6 +206,33 @@ export default function ForYou() {
 
         .emotion-btn:hover {
           background: #ffe2c6;
+        }
+
+        .card-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 30px;
+          margin-top: 20px;
+        }
+
+        .card {
+          background: white;
+          color: black;
+          padding: 20px;
+          display: flex;
+          gap: 15px;
+          border-radius: 6px;
+        }
+
+        .card-img {
+          width: 60px;
+          height: 60px;
+          background: #ddd;
+          border-radius: 4px;
+        }
+
+        .card-text h3 {
+          margin: 0 0 5px;
         }
       `}</style>
     </div>

@@ -1,14 +1,18 @@
 export default function Footer() {
   return (
-    <footer>
-      <div style={{ display: "flex", gap: "12px" }}>
-        <span>📸</span>
-        <span>💬</span>
-        <span>💼</span>
+    <footer style={{
+      display: "flex",
+      justifyContent: "space-between",
+      padding: "20px",
+      backgroundColor: "#222",
+      color: "#fff",
+      borderTop: "1px solid #444"
+    }}>
+      <div style={{ textAlign: "left", lineHeight: "1.6" }}>
+        Created in 2025 for HCI subject at Kyungpook National University
       </div>
 
       <div style={{ textAlign: "right", lineHeight: "1.6" }}>
-        <strong>Our mission</strong><br />
         About Us<br />
         Our Policy
       </div>

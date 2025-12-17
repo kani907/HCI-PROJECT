@@ -12,6 +12,11 @@ html, body {
   color: white;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 
 /* -------------------------------------------------- */
 /* HEADER */
@@ -19,24 +24,21 @@ html, body {
 
 .header {
   width: 100vw;
-  max-height: 10vh;
   padding: 20px 40px;
 
   display: flex;
-  justify-content: space-between; /* left logo + right nav */
+  justify-content: space-between;
   align-items: center;
   gap: 25px;
 
   background: #1a1a1a;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .logo {
   font-size: 22px;
   font-weight: 700;
   color: white;
-  text-decoration: none;
   letter-spacing: 1px;
 }
 
@@ -49,7 +51,6 @@ html, body {
 .nav-link {
   color: #ddd;
   font-size: 14px;
-  text-decoration: none;
 }
 
 .nav-link:hover {
@@ -62,20 +63,18 @@ html, body {
 /* -------------------------------------------------- */
 
 .btn-small {
-  padding: 5px 14px;
+  padding: 7px 16px;
   background: white;
   color: black;
   border-radius: 4px;
-  font-size: 13px;
-  text-decoration: none;
+  font-size: 14px;
 }
 
 .btn-small-outline {
-  padding: 5px 14px;
+  padding: 7px 16px;
   border: 1px solid white;
   border-radius: 4px;
-  font-size: 13px;
-  text-decoration: none;
+  font-size: 14px;
 }
 
 .btn-dark {
@@ -84,7 +83,6 @@ html, body {
   background: #222;
   color: white;
   border-radius: 6px;
-  text-decoration: none;
   font-size: 16px;
   transition: 0.25s ease-in-out;
 }
@@ -94,6 +92,21 @@ html, body {
   transform: scale(1.05);
 }
 
+.btn {
+  background: #d87800;
+  padding: 12px;
+  font-size: 17px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  background: #ff962b;
+}
+
 
 /* -------------------------------------------------- */
 /* HERO SECTION */
@@ -101,8 +114,8 @@ html, body {
 
 .hero {
   width: 100vw;
-  height: 80vh;
-  background: radial-gradient(circle, #ff9900 0%, #d87800 50%, #aa5500 100%);
+  height: 76vh;
+  background: radial-gradient(circle, #ff9c2a 0%, #d87800 55%, #aa4f00 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -137,8 +150,16 @@ html, body {
 
 
 /* -------------------------------------------------- */
-/* ORANGE FRAME (RECOMMENDS PAGE) */
+/* ORANGE BLOCKS */
 /* -------------------------------------------------- */
+
+.orange {
+  background: #d87800 !important;
+}
+
+.right.orange {
+  background: #d87800 !important;
+}
 
 .orange-frame {
   width: 100%;
@@ -148,35 +169,20 @@ html, body {
   justify-content: center;
 }
 
+
+/* -------------------------------------------------- */
+/* CONTENT BOX */
+/* -------------------------------------------------- */
+
 .content-box {
   background: #222;
   width: 80%;
   padding: 40px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .rec-title {
   margin-bottom: 40px;
-}
-
-.profile-card {
-  background: #222;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid white;
-  max-width: 400px;
-  margin-top: 20px;
-}
-
-.profile-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-}
-
-.profile-row strong {
-  color: #ff8c00;
 }
 
 
@@ -197,6 +203,7 @@ html, body {
   display: flex;
   gap: 15px;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 .card-img {
@@ -212,11 +219,96 @@ html, body {
 
 
 /* -------------------------------------------------- */
+/* LOGIN / REGISTER SPLIT */
+/* -------------------------------------------------- */
+
+.split {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* left side (black) */
+.left {
+  flex: 1;
+  background: #111;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.left h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+/* right side (orange) */
+.right {
+  flex: 1;
+  background: #111;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.right h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+
+/* -------------------------------------------------- */
+/* FORM */
+/* -------------------------------------------------- */
+
+.form-box {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-box input {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #222;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.form-box input:focus {
+  background: #333;
+}
+
+.form-box a {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #bbb;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.form-box a:hover {
+  color: white;
+}
+
+
+/* -------------------------------------------------- */
 /* FOOTER */
 /* -------------------------------------------------- */
 
 footer {
-  max-height: 10vh;
   width: 100%;
   padding: 15px 40px;
 

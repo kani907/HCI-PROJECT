@@ -9,7 +9,6 @@ interface MoviePageProps {
 export default async function MovieProfile({ params }: MoviePageProps) {
   const { id } = await params;
 
-  // --- FETCH ---
   const res = await fetch(`http://localhost:8000/movie/find_id/${id}`, {
     cache: "no-store",
   });
@@ -25,31 +24,58 @@ export default async function MovieProfile({ params }: MoviePageProps) {
   const movie = await res.json();
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>{movie.name}</h1>
-
-      <p style={{ marginTop: "10px", fontSize: "18px", opacity: 0.9 }}>
-        Rating: {movie.rating}
-      </p>
-
-      <div style={{ marginTop: "10px", opacity: 0.8 }}>
-        <strong>Year:</strong> {movie.release_date}
-      </div>
-
-      <div style={{ marginTop: "10px", opacity: 0.8 }}>
-        <strong>Genres:</strong> {movie.tags?.genres?.join(", ")}
-      </div>
-
+    <div
+      style={{
+        padding: "40px",
+        display: "flex",
+        gap: "40px",
+        alignItems: "flex-start",
+        maxWidth: "1000px",
+        margin: "0 auto",
+      }}
+    >
+      {/* Poster */}
       <div
         style={{
-          width: "200px",
-          height: "280px",
-          background: "#444",
-          borderRadius: "6px",
-          marginTop: "30px",
+          width: "260px",
+          height: "380px",
+          backgroundColor: "#333",
+          borderRadius: "10px",
+          backgroundImage:
+            "url('https://placehold.co/260x380?text=Moodify')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          flexShrink: 0,
         }}
       />
-      <AddToProfileButton movieId={id} />
+
+      {/* Details */}
+      <div style={{ flex: 1 }}>
+        <h1 style={{ fontSize: "42px", marginBottom: "10px" }}>
+          {movie.name}
+        </h1>
+
+        <div
+          style={{
+            opacity: 0.85,
+            marginBottom: "20px",
+            fontSize: "18px",
+            lineHeight: "1.6",
+          }}
+        >
+          <p>
+            <strong>Rating:</strong> {movie.rating}
+          </p>
+          <p>
+            <strong>Year:</strong> {movie.release_date}
+          </p>
+          <p>
+            <strong>Genres:</strong> {movie.tags?.genres?.join(", ")}
+          </p>
+        </div>
+
+        <AddToProfileButton movieId={id} />
+      </div>
     </div>
   );
 }

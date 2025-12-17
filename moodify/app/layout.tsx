@@ -1,19 +1,26 @@
+"use client";
+
 import "./globals.css";
+import { usePathname } from "next/navigation";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-export const metadata = {
-  title: "Moodify",
-  description: "Cinema that feels you."
-};
+export default function RootLayout({ children }) {
+  const pathname = usePathname();
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const noLayoutRoutes = ["/login", "/register"];
+  const hideLayout = noLayoutRoutes.includes(pathname);
+
   return (
     <html lang="en">
       <body>
-        <Header />
-        {children}
-        <Footer />
+        {!hideLayout && <Header />}
+
+        <div className={hideLayout ? "" : "page-container"}>
+          {children}
+        </div>
+
+        {!hideLayout && <Footer />}
       </body>
     </html>
   );
