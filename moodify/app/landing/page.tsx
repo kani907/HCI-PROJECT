@@ -6,10 +6,14 @@ export default function Landing() {
   const [query, setQuery] = useState("");
   const router = useRouter();
 
-  const handleSearch = (e) => {
-    if (e.key === "Enter" && query.trim() !== "") {
+  const handleSearch = () => {
+    if (query.trim() !== "") {
       router.push(`/search?q=${encodeURIComponent(query)}`);
     }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSearch();
   };
 
   const handleRecommendations = () => {
@@ -36,22 +40,37 @@ export default function Landing() {
         Cinema that feels you.
       </p>
 
-      <input
-        style={{
-          padding: "14px 18px",
-          width: "320px",
-          borderRadius: "8px",
-          border: "1px solid #555",
-          backgroundColor: "#222",
-          color: "white",
-          fontSize: "16px",
-          outline: "none",
-        }}
-        placeholder="Search for a movie..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleSearch}
-      />
+      {/* SEARCH BAR + BUTTON */}
+      <div style={{ display: "flex", gap: "10px" }}>
+        <input
+          style={{
+            padding: "14px 18px",
+            width: "260px",
+            borderRadius: "8px",
+            border: "1px solid #555",
+            backgroundColor: "#222",
+            color: "white",
+            fontSize: "16px",
+            outline: "none",
+          }}
+          placeholder="Search for a movie..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+
+        <button
+          onClick={handleSearch}
+          style={{
+            padding: "14px 20px",
+            fontSize: "16px",
+            borderRadius: "8px",
+            cursor: "pointer",
+          }}
+        >
+          Search
+        </button>
+      </div>
 
       <button
         className="btn"
